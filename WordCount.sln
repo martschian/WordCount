@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordCount.API", "WordCount.API\WordCount.API.csproj", "{054655E8-CE7F-4608-8A07-88CD6A6224EA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{054655E8-CE7F-4608-8A07-88CD6A6224EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{054655E8-CE7F-4608-8A07-88CD6A6224EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{054655E8-CE7F-4608-8A07-88CD6A6224EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{054655E8-CE7F-4608-8A07-88CD6A6224EA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3529B6C5-9EBF-453B-9EC1-96139E845CDC}
+	EndGlobalSection
+EndGlobal
