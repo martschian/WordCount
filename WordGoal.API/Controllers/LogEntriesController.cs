@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WordGoal.API.Data;
 using WordGoal.API.Entities;
+using WordGoal.API.Models;
 
 namespace WordGoal.API.Controllers
 {
@@ -15,20 +17,19 @@ namespace WordGoal.API.Controllers
     public class LogEntriesController : ControllerBase
     {
         private readonly WordGoalAPIContext _context;
+        private readonly IMapper _mapper;
 
-        public LogEntriesController(WordGoalAPIContext context)
+        public LogEntriesController(WordGoalAPIContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/LogEntries
         [HttpGet]
         public async Task<ActionResult<IEnumerable<LogEntry>>> GetLogEntry()
         {
-            return await _context.LogEntry
-                .Include(l => l.Project)
-                .ThenInclude(p => p.Notes)
-                .ToListAsync();
+            return Ok(_mapper.Map<IEnumerable<LogEntryDto>>(await _context.LogEntry.ToListAsync()));
         }
 
         // GET: api/LogEntries/5
@@ -42,7 +43,7 @@ namespace WordGoal.API.Controllers
                 return NotFound();
             }
 
-            return logEntry;
+            return Ok(_mapper.Map<LogEntryDto>(logEntry));
         }
 
         // PUT: api/LogEntries/5

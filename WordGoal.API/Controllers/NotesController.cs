@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WordGoal.API.Data;
 using WordGoal.API.Entities;
+using WordGoal.API.Models;
 
 namespace WordGoal.API.Controllers
 {
@@ -15,17 +17,19 @@ namespace WordGoal.API.Controllers
     public class NotesController : ControllerBase
     {
         private readonly WordGoalAPIContext _context;
+        private readonly IMapper _mapper;
 
-        public NotesController(WordGoalAPIContext context)
+        public NotesController(WordGoalAPIContext context, IMapper mapper)
         {
             _context = context;
+            this._mapper = mapper;
         }
 
         // GET: api/Notes
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Note>>> GetNote()
         {
-            return await _context.Note.ToListAsync();
+            return Ok(_mapper.Map<IEnumerable<NoteDto>>(await _context.Note.ToListAsync()));
         }
 
         // GET: api/Notes/5
@@ -39,7 +43,7 @@ namespace WordGoal.API.Controllers
                 return NotFound();
             }
 
-            return note;
+            return Ok(_mapper.Map<NoteDto>(note));
         }
 
         // PUT: api/Notes/5
