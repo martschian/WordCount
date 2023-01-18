@@ -1,4 +1,9 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using WordCount.API.Data;
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<WordCountAPIContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("WordCountAPIContext") ?? throw new InvalidOperationException("Connection string 'WordCountAPIContext' not found.")));
 
 // Add services to the container.
 
