@@ -4,7 +4,7 @@ using WordGoal.API.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<WordGoalAPIContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("WordCountAPIContext") ?? throw new InvalidOperationException("Connection string 'WordCountAPIContext' not found.")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("WordGoalAPIContext") ?? throw new InvalidOperationException("Connection string 'WordGoalAPIContext' not found.")));
 
 // Add services to the container.
 

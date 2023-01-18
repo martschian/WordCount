@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace WordCount.API.Migrations
+namespace WordGoal.API.Migrations
 {
     public partial class Initial : Migration
     {

@@ -8,7 +8,7 @@ using WordGoal.API.Data;
 
 #nullable disable
 
-namespace WordCount.API.Migrations
+namespace WordGoal.API.Migrations
 {
     [DbContext(typeof(WordGoalAPIContext))]
     partial class WordGoalAPIContextModelSnapshot : ModelSnapshot
@@ -22,7 +22,7 @@ namespace WordCount.API.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("WordCount.API.Entities.LogEntry", b =>
+            modelBuilder.Entity("WordGoal.API.Entities.LogEntry", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -59,7 +59,7 @@ namespace WordCount.API.Migrations
                         });
                 });
 
-            modelBuilder.Entity("WordCount.API.Entities.Note", b =>
+            modelBuilder.Entity("WordGoal.API.Entities.Note", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -99,7 +99,7 @@ namespace WordCount.API.Migrations
                         });
                 });
 
-            modelBuilder.Entity("WordCount.API.Entities.Project", b =>
+            modelBuilder.Entity("WordGoal.API.Entities.Project", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -134,7 +134,7 @@ namespace WordCount.API.Migrations
                         });
                 });
 
-            modelBuilder.Entity("WordCount.API.Entities.User", b =>
+            modelBuilder.Entity("WordGoal.API.Entities.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -163,9 +163,9 @@ namespace WordCount.API.Migrations
                         });
                 });
 
-            modelBuilder.Entity("WordCount.API.Entities.LogEntry", b =>
+            modelBuilder.Entity("WordGoal.API.Entities.LogEntry", b =>
                 {
-                    b.HasOne("WordCount.API.Entities.Project", "Project")
+                    b.HasOne("WordGoal.API.Entities.Project", "Project")
                         .WithMany("LogEntries")
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -174,9 +174,9 @@ namespace WordCount.API.Migrations
                     b.Navigation("Project");
                 });
 
-            modelBuilder.Entity("WordCount.API.Entities.Note", b =>
+            modelBuilder.Entity("WordGoal.API.Entities.Note", b =>
                 {
-                    b.HasOne("WordCount.API.Entities.Project", "Project")
+                    b.HasOne("WordGoal.API.Entities.Project", "Project")
                         .WithMany("Notes")
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -185,9 +185,9 @@ namespace WordCount.API.Migrations
                     b.Navigation("Project");
                 });
 
-            modelBuilder.Entity("WordCount.API.Entities.Project", b =>
+            modelBuilder.Entity("WordGoal.API.Entities.Project", b =>
                 {
-                    b.HasOne("WordCount.API.Entities.User", "User")
+                    b.HasOne("WordGoal.API.Entities.User", "User")
                         .WithMany("Projects")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -196,14 +196,14 @@ namespace WordCount.API.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("WordCount.API.Entities.Project", b =>
+            modelBuilder.Entity("WordGoal.API.Entities.Project", b =>
                 {
                     b.Navigation("LogEntries");
 
                     b.Navigation("Notes");
                 });
 
-            modelBuilder.Entity("WordCount.API.Entities.User", b =>
+            modelBuilder.Entity("WordGoal.API.Entities.User", b =>
                 {
                     b.Navigation("Projects");
                 });
