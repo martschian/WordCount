@@ -1,4 +1,4 @@
-﻿namespace WordCount.API.Entities
+﻿namespace WordGoal.API.Entities
 {
     public class Project
     {
@@ -8,6 +8,6 @@
         public User User { get; set; }
         public int UserId { get; set; }
         public ICollection<LogEntry>? LogEntries { get; set; }
-        public ICollection<Note>? Notes { get; set; }    
+        public ICollection<Note>? Notes { get; set; }
     }
 }

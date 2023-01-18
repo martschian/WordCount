@@ -5,15 +5,15 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using WordCount.API.Data;
+using WordGoal.API.Data;
 
 #nullable disable
 
 namespace WordCount.API.Migrations
 {
-    [DbContext(typeof(WordCountAPIContext))]
-    [Migration("20230118095529_Initial")]
-    partial class Initial
+    [DbContext(typeof(WordGoalAPIContext))]
+    [Migration("20230118110335_Seeding")]
+    partial class Seeding
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -49,6 +49,16 @@ namespace WordCount.API.Migrations
                     b.HasIndex("ProjectId");
 
                     b.ToTable("LogEntry");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            NumberOfMinutes = 10,
+                            ProjectId = 1,
+                            Timestamp = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            WordCount = 100
+                        });
                 });
 
             modelBuilder.Entity("WordCount.API.Entities.Note", b =>
@@ -79,6 +89,16 @@ namespace WordCount.API.Migrations
                     b.HasIndex("ProjectId");
 
                     b.ToTable("Note");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "Short LGBTQIA+ meet-cute ideas",
+                            NoteText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. At consectetur lorem donec massa.",
+                            ProjectId = 1,
+                            Title = "Rainbow Connection"
+                        });
                 });
 
             modelBuilder.Entity("WordCount.API.Entities.Project", b =>
@@ -105,6 +125,15 @@ namespace WordCount.API.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Project");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "What is says on the tin, baybeeee!",
+                            Title = "The Great American Novel",
+                            UserId = 1
+                        });
                 });
 
             modelBuilder.Entity("WordCount.API.Entities.User", b =>
@@ -126,6 +155,14 @@ namespace WordCount.API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("User");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Email = "adam@handoq.com",
+                            Name = "Adam Handoq"
+                        });
                 });
 
             modelBuilder.Entity("WordCount.API.Entities.LogEntry", b =>

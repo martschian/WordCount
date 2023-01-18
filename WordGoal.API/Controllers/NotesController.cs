@@ -5,18 +5,18 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using WordCount.API.Data;
-using WordCount.API.Entities;
+using WordGoal.API.Data;
+using WordGoal.API.Entities;
 
-namespace WordCount.API.Controllers
+namespace WordGoal.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class NotesController : ControllerBase
     {
-        private readonly WordCountAPIContext _context;
+        private readonly WordGoalAPIContext _context;
 
-        public NotesController(WordCountAPIContext context)
+        public NotesController(WordGoalAPIContext context)
         {
             _context = context;
         }

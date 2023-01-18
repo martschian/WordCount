@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using WordCount.API.Data;
+using WordGoal.API.Data;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddDbContext<WordCountAPIContext>(options =>
+builder.Services.AddDbContext<WordGoalAPIContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("WordCountAPIContext") ?? throw new InvalidOperationException("Connection string 'WordCountAPIContext' not found.")));
 
 // Add services to the container.
@@ -18,7 +18,7 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-    var db = scope.ServiceProvider.GetRequiredService<WordCountAPIContext>();
+    var db = scope.ServiceProvider.GetRequiredService<WordGoalAPIContext>();
 
     db.Database.EnsureDeleted();
     db.Database.Migrate();

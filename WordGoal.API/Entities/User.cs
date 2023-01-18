@@ -1,4 +1,4 @@
-﻿namespace WordCount.API.Entities
+﻿namespace WordGoal.API.Entities
 {
     public class User
     {

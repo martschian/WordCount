@@ -1,16 +1,16 @@
-﻿using WordCount.API.Entities;
+﻿using WordGoal.API.Entities;
 
-namespace WordCount.API.Data
+namespace WordGoal.API.Data
 {
     public class SeedData
     {
-        public static async Task InitAsync(WordCountAPIContext _context)
+        public static async Task InitAsync(WordGoalAPIContext _context)
         {
             var user = new User
             {
                 Name = "Björn Elkeman",
                 Email = "bjorn@elkeman.se",
-                Projects= new List<Project> { }
+                Projects = new List<Project> { }
             };
             await _context.AddAsync(user);
 
@@ -19,18 +19,18 @@ namespace WordCount.API.Data
                 Title = "Depression Is My Middle-Name",
                 Description = "Pitch Black",
                 User = user,
-                Notes= new List<Note> { },
-                LogEntries= new List<LogEntry> { },
+                Notes = new List<Note> { },
+                LogEntries = new List<LogEntry> { },
             };
             await _context.AddAsync(project);
-            
+
             var logEntry = new LogEntry
             {
                 WordCount = 2000,
                 NumberOfMinutes = 180,
                 Timestamp = DateTimeOffset.Now,
                 Project = project,
-                
+
             };
             await _context.AddAsync(logEntry);
 
@@ -45,7 +45,7 @@ namespace WordCount.API.Data
             project.Notes.Add(note);
             project.LogEntries.Add(logEntry);
             user.Projects.Add(project);
-            
+
             await _context.SaveChangesAsync();
         }
     }

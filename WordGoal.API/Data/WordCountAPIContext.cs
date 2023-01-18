@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WordCount.API.Entities;
+using WordGoal.API.Entities;
 
-namespace WordCount.API.Data
+namespace WordGoal.API.Data
 {
-    public class WordCountAPIContext : DbContext
+    public class WordGoalAPIContext : DbContext
     {
-        public WordCountAPIContext(DbContextOptions<WordCountAPIContext> options)
+        public WordGoalAPIContext(DbContextOptions<WordGoalAPIContext> options)
             : base(options)
         {
         }
@@ -24,7 +24,7 @@ namespace WordCount.API.Data
                     Name = "Adam Handoq",
                     Email = "adam@handoq.com"
                 });
-            
+
             modelBuilder.Entity<Project>().HasData(
                 new Project
                 {
@@ -43,7 +43,7 @@ namespace WordCount.API.Data
                     NoteText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. At consectetur lorem donec massa.",
                     ProjectId = 1,
                 });
-            
+
             modelBuilder.Entity<LogEntry>().HasData(
                 new LogEntry
                 {
@@ -56,5 +56,5 @@ namespace WordCount.API.Data
             base.OnModelCreating(modelBuilder);
         }
     }
-    
+
 }

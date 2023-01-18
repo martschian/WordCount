@@ -5,18 +5,18 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using WordCount.API.Data;
-using WordCount.API.Entities;
+using WordGoal.API.Data;
+using WordGoal.API.Entities;
 
-namespace WordCount.API.Controllers
+namespace WordGoal.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class ProjectsController : ControllerBase
     {
-        private readonly WordCountAPIContext _context;
+        private readonly WordGoalAPIContext _context;
 
-        public ProjectsController(WordCountAPIContext context)
+        public ProjectsController(WordGoalAPIContext context)
         {
             _context = context;
         }
@@ -25,7 +25,10 @@ namespace WordCount.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Project>>> GetProject()
         {
-            return await _context.Project.ToListAsync();
+            return await _context.Project
+                .Include(p => p.LogEntries)
+                .Include(p => p.Notes)
+                .ToListAsync();
         }
 
         // GET: api/Projects/5
