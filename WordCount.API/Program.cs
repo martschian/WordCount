@@ -1,18 +1,38 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using WordCount.API.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<WordCountAPIContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("WordCountAPIContext") ?? throw new InvalidOperationException("Connection string 'WordCountAPIContext' not found.")));
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddNewtonsoftJson(options =>
+           options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<WordCountAPIContext>();
+
+    db.Database.EnsureDeleted();
+    db.Database.Migrate();
+
+    try
+    {
+        await SeedData.InitAsync(db);
+    }
+    catch (Exception e)
+    {
+        Console.WriteLine(e.Message);
+        throw;
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

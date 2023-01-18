@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WordCount.API.Data;
 
@@ -11,9 +12,10 @@ using WordCount.API.Data;
 namespace WordCount.API.Migrations
 {
     [DbContext(typeof(WordCountAPIContext))]
-    partial class WordCountAPIContextModelSnapshot : ModelSnapshot
+    [Migration("20230118110335_Seeding")]
+    partial class Seeding
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
