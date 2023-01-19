@@ -6,9 +6,9 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using WordGoal.API.Data;
-using WordGoal.API.Entities;
+using WordGoal.Data;
 using WordGoal.API.Models;
+using WordGoal.Domain;
 
 namespace WordGoal.API.Controllers
 {

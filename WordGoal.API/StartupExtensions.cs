@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WordGoal.API.Data;
+using WordGoal.Data;
 
 namespace WordGoal.API
 {

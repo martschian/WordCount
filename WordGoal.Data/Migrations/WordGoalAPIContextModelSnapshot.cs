@@ -3,19 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using WordGoal.API.Data;
+using WordGoal.Data;
 
 #nullable disable
 
 namespace WordGoal.API.Migrations
 {
     [DbContext(typeof(WordGoalAPIContext))]
-    [Migration("20230118095529_Initial")]
-    partial class Initial
+    partial class WordGoalAPIContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -48,7 +46,17 @@ namespace WordGoal.API.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("LogEntry");
+                    b.ToTable("LogEntry", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            NumberOfMinutes = 10,
+                            ProjectId = 1,
+                            Timestamp = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            WordCount = 100
+                        });
                 });
 
             modelBuilder.Entity("WordGoal.API.Entities.Note", b =>
@@ -78,7 +86,17 @@ namespace WordGoal.API.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("Note");
+                    b.ToTable("Note", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "Short LGBTQIA+ meet-cute ideas",
+                            NoteText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. At consectetur lorem donec massa.",
+                            ProjectId = 1,
+                            Title = "Rainbow Connection"
+                        });
                 });
 
             modelBuilder.Entity("WordGoal.API.Entities.Project", b =>
@@ -104,7 +122,16 @@ namespace WordGoal.API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Project");
+                    b.ToTable("Project", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "What is says on the tin, baybeeee!",
+                            Title = "The Great American Novel",
+                            UserId = 1
+                        });
                 });
 
             modelBuilder.Entity("WordGoal.API.Entities.User", b =>
@@ -125,7 +152,15 @@ namespace WordGoal.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("User");
+                    b.ToTable("User", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Email = "adam@handoq.com",
+                            Name = "Adam Handoq"
+                        });
                 });
 
             modelBuilder.Entity("WordGoal.API.Entities.LogEntry", b =>

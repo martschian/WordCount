@@ -1,4 +1,4 @@
-﻿namespace WordGoal.API.Entities
+﻿namespace WordGoal.Domain
 {
     public class Note
     {

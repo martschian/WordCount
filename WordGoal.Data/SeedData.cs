@@ -1,6 +1,6 @@
-﻿using WordGoal.API.Entities;
+﻿using WordGoal.Domain;
 
-namespace WordGoal.API.Data
+namespace WordGoal.Data
 {
     public class SeedData
     {

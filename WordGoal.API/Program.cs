@@ -1,9 +1,6 @@
-﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.EntityFrameworkCore;
 using WordGoal.API;
-using WordGoal.API.Data;
-using WordGoal.API.Profiles;
+using WordGoal.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 

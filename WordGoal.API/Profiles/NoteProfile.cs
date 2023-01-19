@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using WordGoal.Domain;
 
 namespace WordGoal.API.Profiles
 {
@@ -6,7 +7,7 @@ namespace WordGoal.API.Profiles
     {
         public NoteProfile()
         {
-            CreateMap<Entities.Note, Models.NoteDto>();
+            CreateMap<Note, Models.NoteDto>();
         }
     }
 }

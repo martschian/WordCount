@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WordGoal.API.Entities;
+using WordGoal.Domain;
 
-namespace WordGoal.API.Data
+namespace WordGoal.Data
 {
     public class WordGoalAPIContext : DbContext
     {
@@ -11,11 +11,11 @@ namespace WordGoal.API.Data
         }
 
         public DbSet<Note> Note { get; set; } = default!;
-        
+
         public DbSet<Project> Project { get; set; } = default!;
 
         public DbSet<LogEntry> LogEntry { get; set; } = default!;
-        
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
