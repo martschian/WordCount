@@ -7,7 +7,7 @@
         public string Description { get; set; }
         public User User { get; set; }
         public int UserId { get; set; }
-        public ICollection<LogEntry>? LogEntries { get; set; }
-        public ICollection<Note>? Notes { get; set; }
+        public ICollection<LogEntry> LogEntries { get; set; }
+        public ICollection<Note> Notes { get; set; }
     }
 }

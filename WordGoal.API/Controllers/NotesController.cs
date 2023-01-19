@@ -12,7 +12,7 @@ using WordGoal.API.Models;
 
 namespace WordGoal.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/projects/{projectId}/notes")]
     [ApiController]
     public class NotesController : ControllerBase
     {
@@ -21,22 +21,31 @@ namespace WordGoal.API.Controllers
 
         public NotesController(WordGoalAPIContext context, IMapper mapper)
         {
-            _context = context;
-            this._mapper = mapper;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         // GET: api/Notes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Note>>> GetNote()
+        public async Task<ActionResult<IEnumerable<Note>>> GetNotesForProject(int projectId)
         {
-            return Ok(_mapper.Map<IEnumerable<NoteDto>>(await _context.Note.ToListAsync()));
+            if (await _context.Project.FindAsync(projectId) is null)
+                return NotFound();
+
+            return Ok(await _mapper.ProjectTo<NoteDto>(_context.Note.Where(n => n.ProjectId == projectId)).ToListAsync());
+
+            //return Ok(_mapper.Map<IEnumerable<NoteDto>>(await 
+            //    _context.Note
+            //    .Where(n => n.ProjectId == projectId)
+            //    .Include(n => n.Project)
+            //    .ToListAsync()));
         }
 
         // GET: api/Notes/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Note>> GetNote(int id)
+        [HttpGet("{noteId}")]
+        public async Task<ActionResult<Note>> GetNoteForProject(int noteId)
         {
-            var note = await _context.Note.FindAsync(id);
+            var note = await _context.Note.FindAsync(noteId);
 
             if (note == null)
             {

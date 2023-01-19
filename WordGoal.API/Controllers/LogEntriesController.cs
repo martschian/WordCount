@@ -12,7 +12,7 @@ using WordGoal.API.Models;
 
 namespace WordGoal.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/projects/{projectId}/logentries")]
     [ApiController]
     public class LogEntriesController : ControllerBase
     {
@@ -21,22 +21,26 @@ namespace WordGoal.API.Controllers
 
         public LogEntriesController(WordGoalAPIContext context, IMapper mapper)
         {
-            _context = context;
-            _mapper = mapper;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        // GET: api/LogEntries
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<LogEntry>>> GetLogEntry()
+        public async Task<ActionResult<IEnumerable<LogEntry>>> GetLogEntriesForProject(int projectId)
         {
-            return Ok(_mapper.Map<IEnumerable<LogEntryDto>>(await _context.LogEntry.ToListAsync()));
+            return Ok(_mapper.Map<IEnumerable<LogEntryDto>>(await
+                _context.LogEntry
+                .Where(l => l.ProjectId == projectId)
+                .ToListAsync()));
         }
 
-        // GET: api/LogEntries/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<LogEntry>> GetLogEntry(int id)
+        [HttpGet("{logEntryId}")]
+        public async Task<ActionResult<LogEntry>> GetLogEntryForProject(int logEntryId, int projectId)
         {
-            var logEntry = await _context.LogEntry.FindAsync(id);
+            //var logEntry = await _context.LogEntry.FindAsync(id);
+            var logEntry = await _context.LogEntry
+                //.Where()
+                .FirstOrDefaultAsync(l => l.Id == logEntryId && l.ProjectId == projectId);
 
             if (logEntry == null)
             {

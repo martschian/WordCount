@@ -11,12 +11,14 @@ namespace WordGoal.API.Data
         }
 
         public DbSet<Note> Note { get; set; } = default!;
-
+        
         public DbSet<Project> Project { get; set; } = default!;
 
         public DbSet<LogEntry> LogEntry { get; set; } = default!;
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
             modelBuilder.Entity<User>().HasData(
                 new User
                 {

@@ -21,8 +21,8 @@ namespace WordGoal.API.Controllers
 
         public ProjectsController(WordGoalAPIContext context, IMapper mapper)
         {
-            _context = context;
-            this._mapper = mapper;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         // GET: api/Projects

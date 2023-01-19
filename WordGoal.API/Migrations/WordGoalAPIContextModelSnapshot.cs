@@ -46,7 +46,7 @@ namespace WordGoal.API.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("LogEntry");
+                    b.ToTable("LogEntry", (string)null);
 
                     b.HasData(
                         new
@@ -86,7 +86,7 @@ namespace WordGoal.API.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("Note");
+                    b.ToTable("Note", (string)null);
 
                     b.HasData(
                         new
@@ -122,7 +122,7 @@ namespace WordGoal.API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Project");
+                    b.ToTable("Project", (string)null);
 
                     b.HasData(
                         new
@@ -152,7 +152,7 @@ namespace WordGoal.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("User");
+                    b.ToTable("User", (string)null);
 
                     b.HasData(
                         new

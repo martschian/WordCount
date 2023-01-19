@@ -10,19 +10,19 @@ namespace WordGoal.API.Data
             {
                 Name = "Björn Elkeman",
                 Email = "bjorn@elkeman.se",
-                Projects = new List<Project> { }
+                Projects = new List<Project>()
             };
-            await _context.AddAsync(user);
+            _context.Add(user);
 
             var project = new Project
             {
                 Title = "Depression Is My Middle-Name",
                 Description = "Pitch Black",
                 User = user,
-                Notes = new List<Note> { },
-                LogEntries = new List<LogEntry> { },
+                Notes = new List<Note>(),
+                LogEntries = new List<LogEntry>(),
             };
-            await _context.AddAsync(project);
+            _context.Add(project);
 
             var logEntry = new LogEntry
             {
@@ -32,7 +32,7 @@ namespace WordGoal.API.Data
                 Project = project,
 
             };
-            await _context.AddAsync(logEntry);
+            _context.Add(logEntry);
 
             var note = new Note
             {
@@ -40,7 +40,7 @@ namespace WordGoal.API.Data
                 Description = "A note to test things",
                 NoteText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
             };
-            await _context.AddAsync(note);
+            _context.Add(note);
 
             project.Notes.Add(note);
             project.LogEntries.Add(logEntry);
