@@ -23,6 +23,9 @@ namespace WordGoal.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<LogEntry>>> GetLogEntriesForProject(int projectId)
         {
+            if ((await _context.Project.AnyAsync(p => p.Id == projectId)) is false)
+                return NotFound();
+
             return Ok(_mapper.Map<IEnumerable<LogEntryDto>>(await
                 _context.LogEntry
                 .Where(l => l.ProjectId == projectId)
@@ -32,9 +35,10 @@ namespace WordGoal.API.Controllers
         [HttpGet("{logEntryId}")]
         public async Task<ActionResult<LogEntry>> GetLogEntryForProject(int logEntryId, int projectId)
         {
-            //var logEntry = await _context.LogEntry.FindAsync(id);
+            if ((await _context.Project.AnyAsync(p => p.Id == projectId)) is false )
+                return NotFound();
+
             var logEntry = await _context.LogEntry
-                //.Where()
                 .FirstOrDefaultAsync(l => l.Id == logEntryId && l.ProjectId == projectId);
 
             if (logEntry == null)

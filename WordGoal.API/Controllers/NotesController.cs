@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using WordGoal.Data;
 using WordGoal.API.Models;
 using WordGoal.Domain;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace WordGoal.API.Controllers
 {
@@ -25,11 +26,10 @@ namespace WordGoal.API.Controllers
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        // GET: api/Notes
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Note>>> GetNotesForProject(int projectId)
         {
-            if (await _context.Project.FindAsync(projectId) is null)
+            if ((await _context.Project.AnyAsync(p => p.Id == projectId)) is false)
                 return NotFound();
 
             return Ok(await _mapper.ProjectTo<NoteDto>(_context.Note.Where(n => n.ProjectId == projectId)).ToListAsync());
@@ -41,11 +41,14 @@ namespace WordGoal.API.Controllers
             //    .ToListAsync()));
         }
 
-        // GET: api/Notes/5
         [HttpGet("{noteId}")]
-        public async Task<ActionResult<Note>> GetNoteForProject(int noteId)
+        public async Task<ActionResult<Note>> GetNoteForProject(int projectId, int noteId)
         {
-            var note = await _context.Note.FindAsync(noteId);
+            if ((await _context.Project.AnyAsync(p => p.Id == projectId)) is false)
+                return NotFound();
+
+            var note = await _context.Note
+                .FirstOrDefaultAsync(n => n.Id == noteId && n.ProjectId == projectId); ;
 
             if (note == null)
             {

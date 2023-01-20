@@ -7,7 +7,7 @@ using WordGoal.Domain;
 
 namespace WordGoal.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/projects")]
     [ApiController]
     public class ProjectsController : ControllerBase
     {
@@ -20,14 +20,12 @@ namespace WordGoal.API.Controllers
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        // GET: api/Projects
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Project>>> GetProject()
         {
             return Ok(_mapper.Map<IEnumerable<ProjectDto>>(await _context.Project.ToListAsync()));
         }
 
-        // GET: api/Projects/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Project>> GetProject(int id)
         {
