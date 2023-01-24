@@ -13,18 +13,22 @@ namespace WordGoal.API
 
             // Add services to the container.
 
-            builder.Services.AddControllers().AddNewtonsoftJson(options =>
-                       options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+            builder.Services.AddControllers(configure =>
+            {
+                configure.ReturnHttpNotAcceptable = true;
+            })
+            .AddNewtonsoftJson(options =>
+                   options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
+            .AddXmlDataContractSerializerFormatters();
 
             builder.Services.AddAutoMapper(
                         AppDomain.CurrentDomain.GetAssemblies());
-
+            builder.Services.AddScoped<IWordGoalRepository, WordGoalRepository>(); 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             return builder.Build();
         }
-
         public static WebApplication ConfigurePipeline(this WebApplication app)
         {
             // Configure the HTTP request pipeline.

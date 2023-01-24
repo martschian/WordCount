@@ -6,6 +6,5 @@
         public string Title { get; set; }
         public string Description { get; set; }
         public string NoteText { get; set; }
-        public string ProjectTitle { get; set; }
     }
 }

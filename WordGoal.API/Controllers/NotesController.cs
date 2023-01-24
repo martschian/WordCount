@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
-using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using WordGoal.Data;
 using WordGoal.API.Models;
+using WordGoal.Data;
 using WordGoal.Domain;
-using Microsoft.Extensions.Logging.Abstractions;
 
 namespace WordGoal.API.Controllers
 {
@@ -17,22 +11,32 @@ namespace WordGoal.API.Controllers
     [ApiController]
     public class NotesController : ControllerBase
     {
+        private readonly IWordGoalRepository _repo;
         private readonly WordGoalAPIContext _context;
         private readonly IMapper _mapper;
 
-        public NotesController(WordGoalAPIContext context, IMapper mapper)
+        public NotesController(IWordGoalRepository repo, IMapper mapper, WordGoalAPIContext context)
         {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _repo = repo ?? throw new ArgumentNullException(nameof(repo));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Note>>> GetNotesForProject(int projectId)
+        public async Task<ActionResult<IEnumerable<NoteDto>>> GetNotesForProject(int projectId)
         {
-            if ((await _context.Project.AnyAsync(p => p.Id == projectId)) is false)
-                return NotFound();
+            //if ((await _context.Project.AnyAsync(p => p.Id == projectId)) is false)
 
-            return Ok(await _mapper.ProjectTo<NoteDto>(_context.Note.Where(n => n.ProjectId == projectId)).ToListAsync());
+            if(!await _repo.ProjectExistsAsync(projectId))
+                return NotFound();
+            
+            //return Ok(_mapper.ProjectTo<NoteDto>(_context.Note.Where(n => n.ProjectId == projectId)).ToListAsync());
+            
+            var notes = await _repo.GetNotesAsync(projectId);
+
+            return Ok(_mapper.Map<IEnumerable<NoteDto>>(_repo.GetNotesAsync(projectId)));
+            
+            //return Ok(_mapper.Map<IEnumerable<NoteDto>>(notes));
 
             //return Ok(_mapper.Map<IEnumerable<NoteDto>>(await 
             //    _context.Note
@@ -42,13 +46,13 @@ namespace WordGoal.API.Controllers
         }
 
         [HttpGet("{noteId}")]
-        public async Task<ActionResult<Note>> GetNoteForProject(int projectId, int noteId)
+        public async Task<ActionResult<NoteDto>> GetNoteForProject(int projectId, int noteId)
         {
-            if ((await _context.Project.AnyAsync(p => p.Id == projectId)) is false)
+            //if ((await _context.Project.AnyAsync(p => p.Id == projectId)) is false)
+            if (!await _repo.ProjectExistsAsync(projectId))
                 return NotFound();
 
-            var note = await _context.Note
-                .FirstOrDefaultAsync(n => n.Id == noteId && n.ProjectId == projectId); ;
+            var note = _repo.GetNoteAsync(projectId, noteId);
 
             if (note == null)
             {

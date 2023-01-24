@@ -13,33 +13,32 @@ namespace WordGoal.API.Controllers
     {
         private readonly WordGoalAPIContext _context;
         private readonly IMapper _mapper;
+        private readonly IWordGoalRepository _repo;
 
-        public LogEntriesController(WordGoalAPIContext context, IMapper mapper)
+        public LogEntriesController(WordGoalAPIContext context, IMapper mapper, IWordGoalRepository repo)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
+            _repo = repo ?? throw new ArgumentNullException(nameof(repo));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<LogEntry>>> GetLogEntriesForProject(int projectId)
+        public async Task<ActionResult<IEnumerable<LogEntryDto>>> GetLogEntriesForProject(int projectId)
         {
-            if ((await _context.Project.AnyAsync(p => p.Id == projectId)) is false)
+            if (!await _repo.ProjectExistsAsync(projectId))
                 return NotFound();
 
             return Ok(_mapper.Map<IEnumerable<LogEntryDto>>(await
-                _context.LogEntry
-                .Where(l => l.ProjectId == projectId)
-                .ToListAsync()));
+                _repo.GetLogEntriesAsync(projectId)));
         }
 
         [HttpGet("{logEntryId}")]
-        public async Task<ActionResult<LogEntry>> GetLogEntryForProject(int logEntryId, int projectId)
+        public async Task<ActionResult<LogEntryDto>> GetLogEntryForProject(int logEntryId, int projectId)
         {
-            if ((await _context.Project.AnyAsync(p => p.Id == projectId)) is false )
+            if (!await _repo.ProjectExistsAsync(projectId))
                 return NotFound();
 
-            var logEntry = await _context.LogEntry
-                .FirstOrDefaultAsync(l => l.Id == logEntryId && l.ProjectId == projectId);
+            var logEntry = await _repo.GetLogEntryAsync(projectId, logEntryId);
 
             if (logEntry == null)
             {

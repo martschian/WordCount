@@ -24,26 +24,50 @@ namespace WordGoal.Data
             };
             _context.Add(project);
 
-            var logEntry = new LogEntry
-            {
-                WordCount = 2000,
-                NumberOfMinutes = 180,
-                Timestamp = DateTimeOffset.Now,
-                Project = project,
+            var logEntries = new List<LogEntry>() {
+                new LogEntry
+                {
+                    WordCount = 2000,
+                    NumberOfMinutes = 180,
+                    Timestamp = DateTimeOffset.Now,
+                    Project = project,
 
+                },
+                new LogEntry{
+                    WordCount = 200,
+                    NumberOfMinutes = 25,
+                    Timestamp = new DateTimeOffset(2022, 12, 21, 13, 30, 00, new TimeSpan(1, 0, 0)),
+                    Project= project,
+                } 
             };
-            _context.Add(logEntry);
+            _context.AddRange(logEntries);
 
-            var note = new Note
+            var notes = new List<Note>() {
+                new Note
             {
                 Title = "Test Note",
                 Description = "A note to test things",
                 NoteText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-            };
-            _context.Add(note);
+            },new Note
+            {
+                Title = "Secret Note",
+                Description = "Secrets that should not be known",
+                NoteText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+            },
 
-            project.Notes.Add(note);
-            project.LogEntries.Add(logEntry);
+            };
+
+            foreach (var note in notes)
+            {
+                _context.Add(note);
+                project.Notes.Add(note);
+            }
+            
+            foreach (var item in logEntries)
+            {
+                project.LogEntries.Add(item);
+            }
+            
             user.Projects.Add(project);
 
             await _context.SaveChangesAsync();
