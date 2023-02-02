@@ -25,30 +25,16 @@ namespace WordGoal.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<NoteDto>>> GetNotesForProject(int projectId)
         {
-            //if ((await _context.Project.AnyAsync(p => p.Id == projectId)) is false)
-
             if(!await _repo.ProjectExistsAsync(projectId))
                 return NotFound();
             
-            //return Ok(_mapper.ProjectTo<NoteDto>(_context.Note.Where(n => n.ProjectId == projectId)).ToListAsync());
+            return Ok(_mapper.Map<IEnumerable<NoteDto>>(await _repo.GetNotesAsync(projectId)));
             
-            var notes = await _repo.GetNotesAsync(projectId);
-
-            return Ok(_mapper.Map<IEnumerable<NoteDto>>(_repo.GetNotesAsync(projectId)));
-            
-            //return Ok(_mapper.Map<IEnumerable<NoteDto>>(notes));
-
-            //return Ok(_mapper.Map<IEnumerable<NoteDto>>(await 
-            //    _context.Note
-            //    .Where(n => n.ProjectId == projectId)
-            //    .Include(n => n.Project)
-            //    .ToListAsync()));
         }
 
         [HttpGet("{noteId}")]
         public async Task<ActionResult<NoteDto>> GetNoteForProject(int projectId, int noteId)
         {
-            //if ((await _context.Project.AnyAsync(p => p.Id == projectId)) is false)
             if (!await _repo.ProjectExistsAsync(projectId))
                 return NotFound();
 
@@ -62,7 +48,6 @@ namespace WordGoal.API.Controllers
             return Ok(_mapper.Map<NoteDto>(note));
         }
 
-        // PUT: api/Notes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutNote(int id, Note note)
@@ -93,9 +78,26 @@ namespace WordGoal.API.Controllers
             return NoContent();
         }
 
-        // POST: api/Notes
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Creates a Note.
+        /// </summary>
+        /// <param name="note"></param>
+        /// <returns>A newly created Note</returns>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     POST /Projects/{id}/Notes
+        ///     {
+        ///        "name": "Item #1",
+        ///        "isComplete": true
+        ///     }
+        ///
+        /// </remarks>
+        /// <response code="201">Returns the newly created item</response>
+        /// <response code="400">If the item is null</response>
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<Note>> PostNote(Note note)
         {
             _context.Note.Add(note);
