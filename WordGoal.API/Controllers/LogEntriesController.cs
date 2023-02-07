@@ -11,13 +11,11 @@ namespace WordGoal.API.Controllers
     [ApiController]
     public class LogEntriesController : ControllerBase
     {
-        private readonly WordGoalAPIContext _context;
         private readonly IMapper _mapper;
         private readonly IWordGoalRepository _repo;
 
-        public LogEntriesController(WordGoalAPIContext context, IMapper mapper, IWordGoalRepository repo)
+        public LogEntriesController(IMapper mapper, IWordGoalRepository repo)
         {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
             _repo = repo ?? throw new ArgumentNullException(nameof(repo));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
@@ -62,6 +60,7 @@ namespace WordGoal.API.Controllers
                 return NotFound();
             
             var logEntryToModify = await _repo.GetLogEntryAsync(projectId, logEntryId);
+            var timestamp = logEntryToModify.Timestamp;
             if (logEntryToModify == null) 
                 return NotFound();
             
@@ -128,11 +127,6 @@ namespace WordGoal.API.Controllers
             await _repo.SaveAsync();
 
             return NoContent();
-        }
-
-        private bool LogEntryExists(int id)
-        {
-            return _context.LogEntry.Any(e => e.Id == id);
         }
     }
 }
