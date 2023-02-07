@@ -6,9 +6,14 @@ namespace WordGoal.Data
     {
         Task<Note> GetNoteAsync(int projectId, int noteId);
         Task<IEnumerable<Note>> GetNotesAsync(int projectId);
-        Task<LogEntry> GetLogEntryAsync(int projectId, int noteId);
+        Task<LogEntry> GetLogEntryAsync(int projectId, int logEntryId);
         Task<IEnumerable<LogEntry>> GetLogEntriesAsync(int projectId);
         IQueryable<Note> GetNotes(int projectId);
         Task<bool> ProjectExistsAsync(int projectId);
+        void AddLogEntry(LogEntry logEntry, int projectId);
+        void UpdateLogEntry(LogEntry logEntry);
+        void DeleteLogEntry(LogEntry logEntry);
+        Task<bool> SaveAsync();
     }
+
 }

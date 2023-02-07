@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using WordGoal.API.Models;
 using WordGoal.Domain;
 
 namespace WordGoal.API.Profiles
@@ -7,7 +8,8 @@ namespace WordGoal.API.Profiles
     {
         public LogEntryProfile()
         {
-            CreateMap<LogEntry, Models.LogEntryDto>();
+            CreateMap<LogEntry, LogEntryDto>();
+            CreateMap<LogEntryForCreationDto, LogEntry>();
         }
     }
 }

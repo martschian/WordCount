@@ -50,58 +50,82 @@ namespace WordGoal.API.Controllers
 
         // PUT: api/LogEntries/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutLogEntry(int id, LogEntry logEntry)
+        [HttpPut("{logEntryId}")]
+        [Consumes("application/json")]
+        [Produces("application/json")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> PutLogEntry(int projectId, int logEntryId, LogEntryForCreationDto logEntry)
         {
-            if (id != logEntry.Id)
-            {
-                return BadRequest();
-            }
 
-            _context.Entry(logEntry).State = EntityState.Modified;
+            if (!await _repo.ProjectExistsAsync(projectId))
+                return NotFound();
+            
+            var logEntryToModify = await _repo.GetLogEntryAsync(projectId, logEntryId);
+            if (logEntryToModify == null) 
+                return NotFound();
+            
+            _mapper.Map(logEntry, logEntryToModify);
+            await _repo.SaveAsync();
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!LogEntryExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            //_context.Entry(logEntry).State = EntityState.Modified;
 
-            return NoContent();
+            //try
+            //{
+            //    await _context.SaveChangesAsync();
+            //}
+            //catch (DbUpdateConcurrencyException)
+            //{
+            //    if (!LogEntryExists(id))
+            //    {
+            //        return NotFound();
+            //    }
+            //    else
+            //    {
+            //        throw;
+            //    }
+            //}
+            return Ok(_mapper.Map<LogEntryDto>(logEntryToModify));
+            //return NoContent();
         }
 
         // POST: api/LogEntries
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<LogEntry>> PostLogEntry(LogEntry logEntry)
+        [Consumes("application/json")]
+        public async Task<ActionResult<LogEntry>> PostLogEntry(int projectId, LogEntryForCreationDto logEntry)
         {
-            _context.LogEntry.Add(logEntry);
-            await _context.SaveChangesAsync();
+            if (!await _repo.ProjectExistsAsync(projectId))
+                return NotFound();
 
-            return CreatedAtAction("GetLogEntry", new { id = logEntry.Id }, logEntry);
+            var logEntryEntity = _mapper.Map<LogEntry>(logEntry);
+
+            _repo.AddLogEntry(logEntryEntity, projectId);
+            await _repo.SaveAsync();            
+            
+            var logEntryToReturn = _mapper.Map<LogEntryDto>(logEntryEntity);
+
+            return CreatedAtAction("GetLogEntryForProject", new { projectId, logEntryId = logEntryToReturn.Id }, logEntryToReturn);
+            //return CreatedAtRoute("GetCourseForAuthor", new { authorId, courseId = logEntryToReturn.Id },
+            //courseToReturn);
         }
 
         // DELETE: api/LogEntries/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteLogEntry(int id)
+        [HttpDelete("{logEntryId}")]
+        public async Task<IActionResult> DeleteLogEntry(int projectId, int logEntryId)
         {
-            var logEntry = await _context.LogEntry.FindAsync(id);
+            if (!await _repo.ProjectExistsAsync(projectId))
+                return NotFound();
+            
+            var logEntry = await _repo.GetLogEntryAsync(projectId, logEntryId);
+
             if (logEntry == null)
             {
                 return NotFound();
             }
-
-            _context.LogEntry.Remove(logEntry);
-            await _context.SaveChangesAsync();
+            
+            _repo.DeleteLogEntry(logEntry);
+            await _repo.SaveAsync();
 
             return NoContent();
         }
