@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions;
 using WordGoal.Domain;
 
 namespace WordGoal.Data
@@ -16,12 +17,12 @@ namespace WordGoal.Data
         {
             return await _context.LogEntry.Where(l => l.ProjectId == projectId).ToListAsync();
         }
-        public async Task<LogEntry> GetLogEntryAsync(int projectId, int logEntryId)
+        public async Task<LogEntry?> GetLogEntryAsync(int projectId, int logEntryId)
         {
-            return await _context.LogEntry.FirstOrDefaultAsync( l => l.Id == logEntryId && l.ProjectId == projectId);
+            return await _context.LogEntry.FirstOrDefaultAsync(l => l.Id == logEntryId && l.ProjectId == projectId);
         }
 
-        public async Task<Note> GetNoteAsync(int projectId, int noteId)
+        public async Task<Note?> GetNoteAsync(int projectId, int noteId)
         {
             return await _context.Note.FirstOrDefaultAsync(n => n.Id == noteId && n.ProjectId == projectId);
         }
@@ -47,7 +48,7 @@ namespace WordGoal.Data
             {
                 throw new ArgumentNullException(nameof(logEntry));
             }
-            
+
             logEntry.ProjectId = projectId;
             logEntry.Timestamp = DateTimeOffset.Now;
             _context.LogEntry.Add(logEntry);
@@ -66,6 +67,53 @@ namespace WordGoal.Data
         public void UpdateLogEntry(LogEntry logEntry)
         {
             throw new NotImplementedException();
+        }
+
+        public void AddNote(Note note, int projectId)
+        {
+            if (note is null)
+            {
+                throw new ArgumentNullException(nameof(note));
+            }
+
+            note.ProjectId = projectId;
+
+            _context.Note.Add(note);
+        }
+
+        public void DeleteNote(Note note)
+        {
+            _context.Note.Remove(note);
+        }
+
+        public async Task<Project?> GetProjectAsync(int userId, int projectId)
+        {
+            return await _context.Project
+                .FirstOrDefaultAsync(p => p.Id == projectId && p.UserId == userId);
+        }
+
+        public async Task<IEnumerable<Project>> GetProjectsAsync(int userId)
+        {
+            return await _context.Project
+                .Where(p => p.UserId == userId)
+                .ToListAsync();
+        }
+
+        public void AddProject(Project project, int userId)
+        {
+            if (project is null)
+            {
+                throw new ArgumentNullException(nameof(project));
+            }
+
+            project.UserId = userId;
+
+            _context.Project.Add(project);
+        }
+
+        public void DeleteProject(Project project)
+        {
+            _context.Project.Remove(project);
         }
     }
 }

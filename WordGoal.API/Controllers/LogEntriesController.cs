@@ -8,6 +8,8 @@ using WordGoal.Domain;
 namespace WordGoal.API.Controllers
 {
     [Route("api/projects/{projectId}/logentries")]
+    [Consumes("application/json")]
+    [Produces("application/json")]
     [ApiController]
     public class LogEntriesController : ControllerBase
     {
@@ -19,7 +21,11 @@ namespace WordGoal.API.Controllers
             _repo = repo ?? throw new ArgumentNullException(nameof(repo));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
-
+        /// <summary>
+        /// Gets all log entries for a project
+        /// </summary>
+        /// <param name="projectId"></param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<LogEntryDto>>> GetLogEntriesForProject(int projectId)
         {
@@ -29,9 +35,14 @@ namespace WordGoal.API.Controllers
             return Ok(_mapper.Map<IEnumerable<LogEntryDto>>(await
                 _repo.GetLogEntriesAsync(projectId)));
         }
-
+        /// <summary>
+        /// Gets the details of a specific log entry
+        /// </summary>
+        /// <param name="logEntryId"></param>
+        /// <param name="projectId"></param>
+        /// <returns></returns>
         [HttpGet("{logEntryId}")]
-        public async Task<ActionResult<LogEntryDto>> GetLogEntryForProject(int logEntryId, int projectId)
+        public async Task<ActionResult<LogEntryDto>> GetLogEntryForProject(int projectId, int logEntryId)
         {
             if (!await _repo.ProjectExistsAsync(projectId))
                 return NotFound();
@@ -46,53 +57,43 @@ namespace WordGoal.API.Controllers
             return Ok(_mapper.Map<LogEntryDto>(logEntry));
         }
 
-        // PUT: api/LogEntries/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Updates the log entry with the specified id
+        /// </summary>
+        /// <param name="projectId"></param>
+        /// <param name="logEntryId"></param>
+        /// <param name="logEntry"></param>
+        /// <returns></returns>
         [HttpPut("{logEntryId}")]
-        [Consumes("application/json")]
-        [Produces("application/json")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         public async Task<IActionResult> PutLogEntry(int projectId, int logEntryId, LogEntryForCreationDto logEntry)
         {
-
             if (!await _repo.ProjectExistsAsync(projectId))
                 return NotFound();
             
             var logEntryToModify = await _repo.GetLogEntryAsync(projectId, logEntryId);
-            var timestamp = logEntryToModify.Timestamp;
+            
             if (logEntryToModify == null) 
                 return NotFound();
             
+            var timestamp = logEntryToModify.Timestamp;
             _mapper.Map(logEntry, logEntryToModify);
             await _repo.SaveAsync();
 
-            //_context.Entry(logEntry).State = EntityState.Modified;
-
-            //try
-            //{
-            //    await _context.SaveChangesAsync();
-            //}
-            //catch (DbUpdateConcurrencyException)
-            //{
-            //    if (!LogEntryExists(id))
-            //    {
-            //        return NotFound();
-            //    }
-            //    else
-            //    {
-            //        throw;
-            //    }
-            //}
             return Ok(_mapper.Map<LogEntryDto>(logEntryToModify));
-            //return NoContent();
         }
 
-        // POST: api/LogEntries
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Creates a new log entry tied to the specified projectId
+        /// </summary>
+        /// <param name="projectId"></param>
+        /// <param name="logEntry"></param>
+        /// <returns></returns>
         [HttpPost]
-        [Consumes("application/json")]
-        public async Task<ActionResult<LogEntry>> PostLogEntry(int projectId, LogEntryForCreationDto logEntry)
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<LogEntryDto>> PostLogEntry(int projectId, LogEntryForCreationDto logEntry)
         {
             if (!await _repo.ProjectExistsAsync(projectId))
                 return NotFound();
@@ -105,12 +106,17 @@ namespace WordGoal.API.Controllers
             var logEntryToReturn = _mapper.Map<LogEntryDto>(logEntryEntity);
 
             return CreatedAtAction("GetLogEntryForProject", new { projectId, logEntryId = logEntryToReturn.Id }, logEntryToReturn);
-            //return CreatedAtRoute("GetCourseForAuthor", new { authorId, courseId = logEntryToReturn.Id },
-            //courseToReturn);
         }
 
-        // DELETE: api/LogEntries/5
+        /// <summary>
+        /// Deletes the specified LogEntry
+        /// </summary>
+        /// <param name="projectId"></param>
+        /// <param name="logEntryId"></param>
+        /// <returns></returns>
         [HttpDelete("{logEntryId}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteLogEntry(int projectId, int logEntryId)
         {
             if (!await _repo.ProjectExistsAsync(projectId))

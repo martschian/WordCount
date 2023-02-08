@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions;
 using WordGoal.API.Models;
 using WordGoal.Data;
 using WordGoal.Domain;
@@ -8,20 +9,25 @@ using WordGoal.Domain;
 namespace WordGoal.API.Controllers
 {
     [Route("api/projects/{projectId}/notes")]
+    [Consumes("application/json")]
+    [Produces("application/json")]
     [ApiController]
     public class NotesController : ControllerBase
     {
         private readonly IWordGoalRepository _repo;
-        private readonly WordGoalAPIContext _context;
+        // private readonly WordGoalAPIContext _context;
         private readonly IMapper _mapper;
 
-        public NotesController(IWordGoalRepository repo, IMapper mapper, WordGoalAPIContext context)
+        public NotesController(IWordGoalRepository repo, IMapper mapper)
         {
             _repo = repo ?? throw new ArgumentNullException(nameof(repo));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="projectId">The id of the project</param>
+        /// <returns>An IEnumerable of NoteDtos</returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<NoteDto>>> GetNotesForProject(int projectId)
         {
@@ -49,47 +55,39 @@ namespace WordGoal.API.Controllers
         }
 
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutNote(int id, Note note)
+        [HttpPut("{noteId}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> PutNote(int projectId, int noteId, NoteForCreationDto note)
         {
-            if (id != note.Id)
-            {
-                return BadRequest();
-            }
+            if (!await _repo.ProjectExistsAsync(projectId))
+                return NotFound();
 
-            _context.Entry(note).State = EntityState.Modified;
+            var noteToModify = await _repo.GetNoteAsync(projectId, noteId);
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!NoteExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            if (noteToModify == null)
+                return NotFound();
 
-            return NoContent();
+            _mapper.Map(note, noteToModify);
+            await _repo.SaveAsync();
+
+            return Ok(_mapper.Map<NoteDto>(noteToModify));
         }
 
         /// <summary>
         /// Creates a Note.
         /// </summary>
         /// <param name="note"></param>
+        /// /// <param name="projectId"></param>
         /// <returns>A newly created Note</returns>
         /// <remarks>
         /// Sample request:
         ///
-        ///     POST /Projects/{id}/Notes
+        ///     POST /projects/{projectId}/notes
         ///     {
-        ///        "name": "Item #1",
-        ///        "isComplete": true
+        ///        "title": "Note #1",
+        ///        "description": "Description of Note #1",
+        ///        "noteText": "The full text of Note #1"
         ///     }
         ///
         /// </remarks>
@@ -98,33 +96,45 @@ namespace WordGoal.API.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<Note>> PostNote(Note note)
+        public async Task<ActionResult<NoteDto>> PostNote(int projectId, NoteForCreationDto note)
         {
-            _context.Note.Add(note);
-            await _context.SaveChangesAsync();
+            if (!await _repo.ProjectExistsAsync(projectId))
+                return NotFound();
 
-            return CreatedAtAction("GetNote", new { id = note.Id }, note);
+            var noteEntity = _mapper.Map<Note>(note);
+            _repo.AddNote(noteEntity, projectId);
+            await _repo.SaveAsync();
+
+            var noteToReturn = _mapper.Map<NoteDto>(noteEntity);
+            
+            return CreatedAtAction("GetNoteForProject", new { projectId, noteId = noteToReturn.Id }, noteToReturn);
         }
 
-        // DELETE: api/Notes/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteNote(int id)
+        /// <summary>
+        /// Deletes a note
+        /// </summary>
+        /// <param name="projectId">The id of the project the note is attached to</param>
+        /// <param name="noteId">The id of the note to be deleted</param>
+        /// <returns></returns>
+        [HttpDelete("{noteId}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> DeleteNote(int projectId, int noteId)
         {
-            var note = await _context.Note.FindAsync(id);
+            if (!await _repo.ProjectExistsAsync(projectId))
+                return NotFound();
+
+            var note = await _repo.GetNoteAsync(projectId, noteId);
+
             if (note == null)
             {
                 return NotFound();
             }
 
-            _context.Note.Remove(note);
-            await _context.SaveChangesAsync();
+            _repo.DeleteNote(note);
+            await _repo.SaveAsync();
 
             return NoContent();
-        }
-
-        private bool NoteExists(int id)
-        {
-            return _context.Note.Any(e => e.Id == id);
         }
     }
 }

@@ -8,28 +8,31 @@ using WordGoal.Domain;
 namespace WordGoal.API.Controllers
 {
     [Route("api/projects")]
+    [Produces("application/json")]
+    [Consumes("application/json")]
     [ApiController]
     public class ProjectsController : ControllerBase
     {
-        private readonly WordGoalAPIContext _context;
+        private readonly int _userId = 1;
+        private readonly IWordGoalRepository _repo;
         private readonly IMapper _mapper;
 
-        public ProjectsController(WordGoalAPIContext context, IMapper mapper)
+        public ProjectsController(IMapper mapper, IWordGoalRepository repo)
         {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _repo = repo ?? throw new ArgumentNullException(nameof(repo));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Project>>> GetProject()
+        public async Task<ActionResult<IEnumerable<ProjectDto>>> GetProjects()
         {
-            return Ok(_mapper.Map<IEnumerable<ProjectDto>>(await _context.Project.ToListAsync()));
+            return Ok(_mapper.Map<IEnumerable<ProjectDto>>(await _repo.GetProjectsAsync(_userId)));
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Project>> GetProject(int id)
+        [HttpGet("{projectId}")]
+        public async Task<ActionResult<ProjectDto>> GetProject(int projectId)
         {
-            var project = await _context.Project.FindAsync(id);
+            var project = await _repo.GetProjectAsync(_userId, projectId);
 
             if (project == null)
             {
@@ -41,65 +44,53 @@ namespace WordGoal.API.Controllers
 
         // PUT: api/Projects/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutProject(int id, Project project)
+        [HttpPut("{projectId}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> PutProject(int projectId, ProjectForCreationDto project)
         {
-            if (id != project.Id)
+            var projectToModify = await _repo.GetProjectAsync(_userId, projectId);
+            if (projectToModify == null)
             {
-                return BadRequest();
+                return NotFound();
             }
+            _mapper.Map(project, projectToModify);
+            await _repo.SaveAsync();
 
-            _context.Entry(project).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ProjectExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return Ok(_mapper.Map<ProjectDto>(projectToModify));
         }
 
         // POST: api/Projects
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Project>> PostProject(Project project)
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<ProjectDto>> PostProject(ProjectForCreationDto project)
         {
-            _context.Project.Add(project);
-            await _context.SaveChangesAsync();
+            var projectEntity = _mapper.Map<Project>(project);
+            _repo.AddProject(projectEntity, _userId);
+            await _repo.SaveAsync();
 
-            return CreatedAtAction("GetProject", new { id = project.Id }, project);
+            var projectToReturn = _mapper.Map<ProjectDto>(projectEntity);
+
+            return CreatedAtAction("GetProject", new { projectId = projectToReturn.Id }, projectToReturn);
         }
 
         // DELETE: api/Projects/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProject(int id)
+        [HttpDelete("{projectId}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> DeleteProject(int projectId)
         {
-            var project = await _context.Project.FindAsync(id);
-            if (project == null)
-            {
-                return NotFound();
-            }
+            var project = await _repo.GetProjectAsync(_userId, projectId);
 
-            _context.Project.Remove(project);
-            await _context.SaveChangesAsync();
+            if (project == null)
+                return NotFound();
+
+            _repo.DeleteProject(project);
+            await _repo.SaveAsync();
 
             return NoContent();
-        }
-
-        private bool ProjectExists(int id)
-        {
-            return _context.Project.Any(e => e.Id == id);
         }
     }
 }
