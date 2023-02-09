@@ -9,6 +9,7 @@ function App() {
       <Routes>
         <Route exact path="/" element={<HomePage />} />
         <Route path="/notes" element={<NotesPage />} />
+
         {/* <Route path="/notes/:slug" element={<NotesPage />} /> */}
       </Routes>
     </div>

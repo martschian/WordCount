@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WordGoal.Data;
 
@@ -11,9 +12,10 @@ using WordGoal.Data;
 namespace WordGoal.API.Migrations
 {
     [DbContext(typeof(WordGoalAPIContext))]
-    partial class WordGoalAPIContextModelSnapshot : ModelSnapshot
+    [Migration("20230209110051_Blupp")]
+    partial class Blupp
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -72,14 +74,9 @@ namespace WordGoal.API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ProjectId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Note");
                 });
@@ -157,10 +154,6 @@ namespace WordGoal.API.Migrations
                         .WithMany("Notes")
                         .HasForeignKey("ProjectId");
 
-                    b.HasOne("WordGoal.Domain.User", null)
-                        .WithMany("Notes")
-                        .HasForeignKey("UserId");
-
                     b.Navigation("Project");
                 });
 
@@ -184,8 +177,6 @@ namespace WordGoal.API.Migrations
 
             modelBuilder.Entity("WordGoal.Domain.User", b =>
                 {
-                    b.Navigation("Notes");
-
                     b.Navigation("Projects");
                 });
 #pragma warning restore 612, 618

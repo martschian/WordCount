@@ -13,7 +13,7 @@ namespace WordGoal.API.Controllers
     [ApiController]
     public class ProjectsController : ControllerBase
     {
-        private readonly int _userId = 1;
+        private readonly int _userId = 2;
         private readonly IWordGoalRepository _repo;
         private readonly IMapper _mapper;
 
